@@ -56,4 +56,11 @@ generation/run_scripts/macros
 # temporary files
 *#*
 *~
-cdb.log
+*cdb.log
+*.swp
+
+
+# Test directory
+Playground
+Arbor
+MASProcessors
