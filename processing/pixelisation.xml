@@ -12,9 +12,9 @@
 
   <!--########  Global  ######################################## -->
   <global>
-    <!-- <parameter name="LCIOInputFiles">
-        ../test.slcio
-    </parameter> -->
+    <parameter name="LCIOInputFiles">
+        test.slcio
+    </parameter>
     <!--parameter name="AllowToModifyEvent" value="true" /-->  
     <!-- <parameter name="MaxRecordNumber" value="100"/>   -->
     <!-- <parameter name="SkipNEvents" value="0"/> -->
@@ -31,7 +31,7 @@
 
   <processor name="DSTOutput" type="LCIOOutputProcessor">
     <!--DST output: drop all hits, skim MCParticles and keep final Tracks, Clusters and  ReconstructedParticles-->
-    <!-- <parameter name="LCIOOutputFile" type="string" > new.slcio </parameter> -->
+    <parameter name="LCIOOutputFile" type="string" > new.slcio </parameter>
     <parameter name="LCIOWriteMode" type="string" value="WRITE_NEW"/>
     <!--parameter name="SplitFileSizekB" type="int" value="1992294"/-->
   </processor>
