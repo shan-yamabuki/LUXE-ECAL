@@ -25,8 +25,9 @@
 
 
   <processor name="MyPixelizationProcessor" type="PixelizationProcessor">  
-    <parameter name="ECALCollectionName" type="string"> SiEcalCollection </parameter>
-    <parameter name="MCCollectionName" type="string"> MCParticle </parameter>
+    <!-- <parameter name="MCCollectionName" type="string"> MCParticle </parameter> -->
+    <parameter name="SimECALCollectionName" type="string"> SiEcalCollection </parameter>
+    <parameter name="PixelECALCollectionName" type="string"> PixelSiEcalCollection </parameter>
   </processor>
 
   <processor name="DSTOutput" type="LCIOOutputProcessor">
