@@ -1,0 +1,48 @@
+<marlin>
+  <constants />
+
+  <!-- The lcgeo directory where to look for the ILD model -->
+
+  <!--########  Execute  ######################################## -->
+  <execute>
+    <!--processor name="InitDD4hep"/-->
+    <processor name="ECALEPixelisation"/>
+    <processor name="DSTOutput"/>
+  </execute>
+
+  <!--########  Global  ######################################## -->
+  <global>
+    <parameter name="LCIOInputFiles">
+      /lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ddsim/muon/run_20240822/ECALe_luxe_v0_QGSP_BERT_mu-_100GeV_1.slcio
+      /lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ddsim/muon/run_20240822/ECALe_luxe_v0_QGSP_BERT_mu-_100GeV_2.slcio
+      /lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ddsim/muon/run_20240822/ECALe_luxe_v0_QGSP_BERT_mu-_100GeV_3.slcio
+      /lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ddsim/muon/run_20240822/ECALe_luxe_v0_QGSP_BERT_mu-_100GeV_4.slcio
+      /lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ddsim/muon/run_20240822/ECALe_luxe_v0_QGSP_BERT_mu-_100GeV_5.slcio
+      /lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ddsim/muon/run_20240822/ECALe_luxe_v0_QGSP_BERT_mu-_100GeV_6.slcio
+      /lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ddsim/muon/run_20240822/ECALe_luxe_v0_QGSP_BERT_mu-_100GeV_7.slcio
+      /lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ddsim/muon/run_20240822/ECALe_luxe_v0_QGSP_BERT_mu-_100GeV_8.slcio
+      /lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ddsim/muon/run_20240822/ECALe_luxe_v0_QGSP_BERT_mu-_100GeV_9.slcio
+    </parameter>
+    <!--parameter name="AllowToModifyEvent" value="true" /-->  
+    <!-- <parameter name="MaxRecordNumber" value="100"/>   -->
+    <!-- <parameter name="SkipNEvents" value="0"/> -->
+    <parameter name="SupressCheck" value="false"/>
+    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> DEBUG </parameter>
+    <!-- <parameter name="RandomSeed" value="1234567890" /> -->
+  </global>
+
+
+  <processor name="ECALEPixelisation" type="PixelizationProcessor">  
+    <parameter name="ECALCollectionName" type="string"> SiEcalCollection </parameter>
+    <parameter name="MCCollectionName" type="string"> MCParticle </parameter>
+  </processor>
+
+  <processor name="DSTOutput" type="LCIOOutputProcessor">
+    <!--DST output: drop all hits, skim MCParticles and keep final Tracks, Clusters and  ReconstructedParticles-->
+    <parameter name="LCIOOutputFile" type="string" > /lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ddsim/muon/pixelised_ECALe_luxe_v0_QGSP_BERT_mu-_100GeV.slcio </parameter>
+    <parameter name="LCIOWriteMode" type="string" value="WRITE_NEW"/>
+    <!--parameter name="SplitFileSizekB" type="int" value="1992294"/-->
+  </processor>
+
+
+</marlin>

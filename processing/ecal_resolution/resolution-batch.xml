@@ -1,0 +1,59 @@
+<marlin>
+
+  <!-- The lcgeo directory where to look for the ILD model -->
+
+  <constants>
+    <!-- Output files constants -->
+    <constant name="EnergyTag" value="000000"></constant>
+    <constant name="InputPathName" value="/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/NPOD_samples/20240827_v1/EnergyR/clustering/data" />
+    <constant name="OutputPathName" value="/lhome/ific/h/huangsha/repos/SiWECAL/processing/ecal_resolution" />
+    <constant name="OutputFileName" value="res_PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_e-_${EnergyTag}00MeV"></constant>
+    <constant name="AIDAFileName" value="${OutputPathName}/${OutputFileName}" />
+  </constants>
+  
+  <!--########  Execute  ######################################## -->
+  
+  <execute>
+    <processor name="MyAIDAProcessor" />
+    <!--processor name="InitDD4hep"/-->
+    <processor name="EcalEResolution"/>
+    <!--processor name="DSTOutput"/-->
+  </execute>
+  
+  <!--########  Global  ######################################## -->
+  <global>
+    <parameter name="LCIOInputFiles">
+      ${InputPathName}/PixelMIPCluster_ECALe_luxe_v1_QGSP_BERT_e-_${EnergyTag}00MeV_0.slcio
+      ${InputPathName}/PixelMIPCluster_ECALe_luxe_v1_QGSP_BERT_e-_${EnergyTag}00MeV_1.slcio
+      ${InputPathName}/PixelMIPCluster_ECALe_luxe_v1_QGSP_BERT_e-_${EnergyTag}00MeV_2.slcio
+      ${InputPathName}/PixelMIPCluster_ECALe_luxe_v1_QGSP_BERT_e-_${EnergyTag}00MeV_3.slcio
+      ${InputPathName}/PixelMIPCluster_ECALe_luxe_v1_QGSP_BERT_e-_${EnergyTag}00MeV_4.slcio
+    </parameter>
+    <parameter name="AllowToModifyEvent" value="false" />
+    <!-- <parameter name="MaxRecordNumber" value="1001"/>   -->
+    <parameter name="SkipNEvents" value="0"/>
+    <parameter name="SupressCheck" value="false"/>
+    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> DEBUG </parameter>
+    <!-- <parameter name="RandomSeed" value="1234567890" /> -->
+  </global>
+
+  <!-- Init processors : histograming, logging, geometry ... -->
+  <processor name="MyAIDAProcessor" type="AIDAProcessor">
+    <!--Processor that handles AIDA files. Creates on directory per processor.  Processors only need to create and fill the histograms, clouds and tuples. Needs to be the first ActiveProcessor-->
+    <!-- compression of output file 0: false >0: true (default) -->
+    <parameter name="Compress" type="int" value="1"/>
+    <!-- filename without extension-->
+    <parameter name="FileName" type="string" value="${AIDAFileName}"/>
+    <!-- type of output file xml (default) or root ( only OpenScientist)-->
+    <parameter name="FileType" type="string" value="root "/>
+  </processor>
+
+  <processor name="EcalEResolution" type="GetEnergyResolutionProcessor">  
+    <parameter name="MCCollectionName" type="string"> MCParticle </parameter>
+    <parameter name="ECALCollectionName" type="string"> SiEcalCollection </parameter>
+    <parameter name="PixelisedECALCollectionName" type="string"> PixelSiEcalCollection </parameter>
+    <parameter name="DigitisedECALCollectionName" type="string"> EcalCollection </parameter>
+  </processor>
+
+
+</marlin>
