@@ -11,3 +11,4 @@ export MARLIN_DLL="${LUXEECAL_REPO}/NNClusteringProcessor/build/lib/libNNCluster
 export MARLIN_DLL="${LUXEECAL_REPO}/Arbor/lib/libRanger.so:${MARLIN_DLL}"
 export MARLIN_DLL="${LUXEECAL_REPO}/MASProcessors/lib/libGetMIPProcessor.so:${MARLIN_DLL}"
 export MARLIN_DLL="${LUXEECAL_REPO}/MASProcessors/lib/libGetEnergyResolutionProcessor.so:${MARLIN_DLL}"
+export MARLIN_DLL="${LUXEECAL_REPO}/ClusterAnalysis/lib/libClusterAnalysisProcessor.so:${MARLIN_DLL}"
