@@ -45,7 +45,7 @@
 
     <processor name="ClusterAnalysing" type="ClusterAnalysisProcessor">
         <parameter name="MCCollectionName" type="string"> MCParticle </parameter>
-        <parameter name="ClusterName" type="string"> CluAB_1st </parameter>
+        <parameter name="ClusterCollectionName" type="string"> CluAB_1st </parameter>
     </processor>
 
 </marlin>
