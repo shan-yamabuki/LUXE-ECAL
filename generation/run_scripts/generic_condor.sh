@@ -180,9 +180,9 @@ for physlist in ${physl[@]}; do
     label=${physlist}_${particle}_${energy_tag}
     echo $label
     
-    scriptname=runddsim_${label}.py
-    condorsh=runddsim_${label}.sh
-    condorsub=runddsim_${label}.sub 
+    scriptname=runddsim_${label}_${nrun0}_${nrun}.py
+    condorsh=runddsim_${label}_${nrun0}_${nrun}.sh
+    condorsub=runddsim_${label}_${nrun0}_${nrun}.sub 
     condorfile=runddsim_${label}
     
     #Write the steering file (careful with the compact file name)
