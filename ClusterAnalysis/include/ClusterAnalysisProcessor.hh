@@ -48,8 +48,8 @@ private:
     float LINEARITY_MIP_to_GeV = 0.0141;
     float LINEARITY_Edep_to_GeV = 96;
     float ECAL_Z[2] = {0, 15*15};//mm
-    float ECAL_X[2] = {-18, +18};//mm
-    float ECAL_Y[2] = {-9, +9};//mm
+    float ECAL_X[2] = {-180, +180};//mm
+    float ECAL_Y[2] = {-90, +90};//mm
     
     virtual void GetMCInfo(LCCollection *col);
     virtual void GetClusterInfo(LCCollection *col);
