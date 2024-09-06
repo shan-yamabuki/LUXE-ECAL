@@ -29,10 +29,15 @@
 #include "marlin/StringParameters.h"
 #define SLM streamlog_out(MESSAGE)
 
-// #include <TF1.h>
+#ifdef MARLIN_AIDA //AIDA
+#include <marlin/AIDAProcessor.h>
+#endif
+#include <TH1.h>
+#include <TH2.h>
+#include <TTree.h>
+#include <TMath.h>
 // #include <TRandom.h>
 // #include <TFile.h>
-// #include <TTree.h>
 // #include <TLorentzVector.h>
 using namespace lcio;
 using namespace marlin;
@@ -40,8 +45,11 @@ using namespace std;
 
 class ClusterAnalysisProcessor : public Processor {
 private:
-    double LINEARITY_MIP_to_GeV = 0.0141;
-    double LINEARITY_Edep_to_GeV = 96;
+    float LINEARITY_MIP_to_GeV = 0.0141;
+    float LINEARITY_Edep_to_GeV = 96;
+    float ECAL_Z[2] = {0, 15*15};//mm
+    float ECAL_X[2] = {-18, +18};//mm
+    float ECAL_Y[2] = {-9, +9};//mm
     
     virtual void GetMCInfo(LCCollection *col);
     virtual void GetClusterInfo(LCCollection *col);
@@ -49,11 +57,20 @@ private:
     string _MCColName;
     string _ClusterColName;
     
-    vector<ROOT::Math::XYZPoint> mc_vertices;
-    vector<ROOT::Math::XYZVector> mc_momentums;
+    vector<ROOT::Math::XYZPoint> mc_vertices, mc_positions;
+    vector<ROOT::Math::XYZVector> mc_directions;
     vector<double> mc_energies;
+    vector<ROOT::Math::XYZPoint> cl_vertices, cl_positions;
     vector<ROOT::Math::XYZVector> cl_directions;
     vector<double> cl_energies;
+
+    TH1 *_xCluster, *_yCluster, *_zCluster;
+    TH2 *_xyCluster, *_zxCluster, *_zyCluster;
+    TH1 *_xResidue, *_yResidue;
+    TH2 *_xyResidue;
+    TH1 *_axCluster, *_ayCluster, *_azCluster;
+    TH1 *_cosResidue;
+    TH1 *_eeCluster, *_eeResidue;
 
 public:
     virtual Processor *newProcessor() { return new ClusterAnalysisProcessor; }
