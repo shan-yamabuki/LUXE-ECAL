@@ -48,13 +48,14 @@ settings.json
 # generation stuff
 *data
 *log
+*logs
 *steer
 *steering
 *macros
 
 *.slcio
-*input
-*output
+*input*/
+*output*/
 
 # temporary files
 *#*

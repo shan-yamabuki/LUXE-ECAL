@@ -21,8 +21,8 @@
   <!--parameter name="MaxRecordNumber" value="10" /-->  
   <parameter name="SkipNEvents" value="0" />  
   <parameter name="SupressCheck" value="false" />  
-  <parameter name="GearXMLFile"> ../../generation/geometry/ECALe_luxe/ECALe_luxe_v0.xml </parameter> <!--gear_ILD_00.xml </parameter-->  
-  <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> MESSAGE </parameter> 
+  <parameter name="GearXMLFile"> ../../generation/geometry/ECALe_luxe/ECALe_luxe_v1.xml </parameter> <!--gear_ILD_00.xml </parameter-->  
+  <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> DEBUG </parameter> 
  </global>
 
 
