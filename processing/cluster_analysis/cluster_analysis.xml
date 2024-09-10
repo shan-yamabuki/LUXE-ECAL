@@ -1,0 +1,64 @@
+<marlin>
+    
+    <!-- The lcgeo directory where to look for the ILD model -->
+     
+    <constants>
+        <constant name="ENERGY" value="00000MeV" />"
+        <constant name="RUNTAG" value="ECALe_luxe_v1_QGSP_BERT_e-_${ENERGY}" />"
+        <constant name="INPUTPATH" value="/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/NPOD_samples/20240827_v1/EnergyR/clustering/data" />"
+        <constant name="INPUTPREFIX" value="PixelDigiCluster" />"
+        <constant name="OUTPUTPATH" value="output/" />"
+        <!-- <constant name="OUTPUTPREFIX" value="ArborCluster" />" -->
+        <constant name="OUTPUTPREFIX" value="NNCluster" />"
+    </constants>
+    
+    <!--########  Execute  ######################################## -->
+    <execute>
+        <processor name="AIDAFileWriter" />
+        <!--processor name="InitDD4hep"/-->
+        <processor name="ClusterAnalysing"/>
+        <!--processor name="DSTOutput"/-->
+    </execute>
+
+    <!--########  Global  ######################################## -->
+    <global>
+        <parameter name="LCIOInputFiles">
+            ${INPUTPATH}/${INPUTPREFIX}_${RUNTAG}_0.slcio
+            ${INPUTPATH}/${INPUTPREFIX}_${RUNTAG}_1.slcio
+            ${INPUTPATH}/${INPUTPREFIX}_${RUNTAG}_2.slcio
+            ${INPUTPATH}/${INPUTPREFIX}_${RUNTAG}_3.slcio
+            ${INPUTPATH}/${INPUTPREFIX}_${RUNTAG}_4.slcio
+        </parameter>
+        <parameter name="AllowToModifyEvent" value="false" />
+        <!-- <parameter name="MaxRecordNumber" value="10"/> -->
+        <parameter name="SkipNEvents" value="0"/>
+        <parameter name="SupressCheck" value="false"/>
+        <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">
+            DEBUG
+        </parameter>
+        <!-- <parameter name="RandomSeed" value="1234567890" /> -->
+    </global>
+    
+    <!-- Init processors : histograming, logging, geometry ... -->
+    <processor name="AIDAFileWriter" type="AIDAProcessor">
+        <!--Processor that handles AIDA files. Creates on directory per processor.
+            Processors only need to create and fill the histograms, clouds and tuples.
+            Needs to be the first ActiveProcessor.
+        -->
+        <!-- compression of output file 0: false >0: true (default) -->
+        <parameter name="Compress" type="int" value="1"/>
+        <!-- filename without extension-->
+        <parameter name="FileName" type="string">
+            ${OUTPUTPATH}/${OUTPUTPREFIX}_${RUNTAG}
+        </parameter>
+        <!-- type of output file xml (default) or root ( only OpenScientist)-->
+        <parameter name="FileType" type="string" value="root"/>
+    </processor>
+
+    <processor name="ClusterAnalysing" type="ClusterAnalysisProcessor">
+        <parameter name="MCCollectionName" type="string"> MCParticle </parameter>
+        <!-- <parameter name="ClusterCollectionName" type="string"> CluAB_1st </parameter> -->
+        <parameter name="ClusterCollectionName" type="string"> NNClusters </parameter>
+    </processor>
+
+</marlin>
