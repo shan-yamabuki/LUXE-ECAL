@@ -1,5 +1,8 @@
 #include "ClusterAnalysisProcessor.hh"
 
+#include "TStyle.h"
+#include "TF1.h"
+
 using EVENT::LCCollection;
 using EVENT::MCParticle;
 // using EVENT::ReconstructedParticle;
@@ -39,8 +42,10 @@ ClusterAnalysisProcessor::~ClusterAnalysisProcessor() {}
 void ClusterAnalysisProcessor::init() {
     AIDAProcessor::tree(this);
     printParameters();
-    // if (_ABClusterColName == "CluAB_1st") {streamlog_out(DEBUG) << "Hello world" << "1" <<endl;}
-    // if (_ABClusterColName == "CluAB_2nd") {streamlog_out(DEBUG) << "Hello world" << "0" <<endl;}
+    // if (_ABClusterColName == "CluAB_1st") {streamlog_out(MESSAGE) << "Hello world" << "1" <<endl;}
+    // if (_ABClusterColName == "CluAB_2nd") {streamlog_out(MESSAGE) << "Hello world" << "0" <<endl;}
+
+    _runEnergy = new TH1F("_runInfo", "Run Information", 1, 0, 1); // Bin 1: Beam energy
 
     _xCluster = new TH1F("cluster_x", "Reconstructed cluster centre; x [mm];", 180, ECAL_X[0], ECAL_X[1]);
     _yCluster = new TH1F("cluster_y", "Reconstructed cluster centre; y [mm];",  90, ECAL_Y[0], ECAL_Y[1]);
@@ -48,17 +53,22 @@ void ClusterAnalysisProcessor::init() {
     _xyCluster = new TH2F("cluster_xy", "Reconstructed cluster center; x [mm]; y [mm]", 90, ECAL_X[0], ECAL_X[1], 45, ECAL_Y[0], ECAL_Y[1]);
     _zxCluster = new TH2F("cluster_zx", "Reconstructed cluster center; z [mm]; x [mm]", 30, ECAL_Z[0], ECAL_Z[1], 90, ECAL_X[0], ECAL_X[1]);
     _zyCluster = new TH2F("cluster_zy", "Reconstructed cluster center; z [mm]; y [mm]", 30, ECAL_Z[0], ECAL_Z[1], 45, ECAL_Y[0], ECAL_Y[1]);
-    _xResidue = new TH1D("residue_x", "Position residue at front; #Deltax [mm];", 40, -10, 10); // yes, no space. Weird!!
-    _yResidue = new TH1D("residue_y", "Position residue at front; #Deltay [mm];", 40, -10, 10);
-    _xyResidue = new TH2D("residue_xy", "Position residue at front; #Deltax [mm]; #Deltay [mm]", 40, -10, 10, 40, -10, 10);
+    /*  The following histograms are declared here but will be filled, instead, at the ending stage.
+        Also, the bin ranges will be determined correspondingly. */
+    _xResidue = new TH1D("residue_x", "Position residue at front; #Deltax [mm];", 31, 0, 31); // yes, no space. Weird!!
+    _yResidue = new TH1D("residue_y", "Position residue at front; #Deltay [mm];", 31, 0, 31);
+    _xyResidue = new TH2D("residue_xy", "Position residue at front; #Deltax [mm]; #Deltay [mm]", 31, 0, 31, 31, 0, 31);
 
     _axCluster = new TH1F("cluster_ax", "Reconstructed direction vector; px/p;", 200, -1, 1);
     _ayCluster = new TH1F("cluster_ay", "Reconstructed direction vector; py/p;", 200, -1, 1);
     _azCluster = new TH1F("cluster_az", "Reconstructed direction vector; pz/p;", 200, -1, 1);
-    _cosResidue = new TH1F("residue_cos", "Angle cosine; cos(#alpha);", 100, 0, 1);
-
-    _eeCluster = new TH1F("cluster_energy", "Reconstructed energy; E [GeV];", 200, 0, 20);
-    _eeResidue = new TH1F("residue_energy", "Energy residue; #DeltaE [GeV];", 100, -5, 5);
+    _cosResidue = new TH1F("residue_cos", "Angle cosine; cos(#alpha);", 200, -1, 1);
+    
+    /*  The following histograms are declared here but will be filled, instead, at the ending stage.
+        Also, the bin ranges will be determined correspondingly. */
+    _emCluster = new TH1D("cluster_mip", "Reconstructed energy; E [MIP];", 61, 0, 61);
+    // _eeCluster = new TH1D("cluster_energy", "Reconstructed energy; E [GeV];", 61, 0, 61);
+    // _eeResidue = new TH1D("residue_energy", "Energy residue; #DeltaE [GeV];", 61, 0, 61);
 }
 
 
@@ -81,6 +91,8 @@ void ClusterAnalysisProcessor::GetMCInfo(EVENT::LCCollection *myCollection) {
         mc_positions.push_back(mc_position_x);
         mc_directions.push_back(mc_direction);
         mc_energies.push_back(mc_energy);
+
+        if (runEnergy==-1) {runEnergy = mc_energy;}
         
         streamlog_out(DEBUG) << "MC Particle " << i+1 <<"/"<< number <<":";
         streamlog_out(DEBUG) << " pdg = " << particle->getPDG() <<",";
@@ -116,13 +128,14 @@ void ClusterAnalysisProcessor::GetClusterInfo(EVENT::LCCollection *myCollection)
         double cl_phi = cluster->getIPhi();
         auto cl_direction = ROOT::Math::Polar3DVector(1, cl_theta, cl_phi);
         ROOT::Math::XYZPoint cl_position_x = cl_centre_x1 - cl_direction*(cl_centre[0]-ECAL_Z[0]);
-        double cl_energy = cluster->getEnergy() * LINEARITY_MIP_to_GeV;
+        double cl_energy = cluster->getEnergy();
         cl_positions.push_back(cl_position_x);
         cl_directions.push_back(ROOT::Math::XYZVector(cl_direction.X(), cl_direction.Y(), cl_direction.Z()));
         cl_energies.push_back(cl_energy);
         
         streamlog_out(DEBUG) << "Cluster " << i+1 <<"/"<< number <<":";
-        streamlog_out(DEBUG) << " E = " << cl_energy << " GeV,";
+        streamlog_out(DEBUG) << " Em = " << cl_energy << " MIPs,";
+        streamlog_out(DEBUG) << " around " << cl_energy*LINEARITY_MIP_to_GeV << " GeV,";
         streamlog_out(DEBUG) <<endl;
         streamlog_out(DEBUG) << "Centred at :";
         streamlog_out(DEBUG) << " cx = " << cl_centre[0] <<",";
@@ -146,7 +159,7 @@ void ClusterAnalysisProcessor::GetClusterInfo(EVENT::LCCollection *myCollection)
         _axCluster->Fill(cl_direction.X());
         _ayCluster->Fill(cl_direction.Y());
         _azCluster->Fill(cl_direction.Z());
-        _eeCluster->Fill(cl_energy);
+        // _eeCluster->Fill(cl_energy);
     }
 }
 
@@ -169,24 +182,24 @@ void ClusterAnalysisProcessor::processEvent(LCEvent *evt) {
                 auto mc_position = mc_positions[i];
                 auto cl_position = cl_positions[i];
                 ROOT::Math::XYZVector d_position = cl_position - mc_position;
-                _xResidue->Fill(d_position.X());
-                _yResidue->Fill(d_position.Y());
-                _xyResidue->Fill(d_position.X(), d_position.Y());
+                _xResidueVec.push_back(d_position.X());
+                _yResidueVec.push_back(d_position.Y());
+                // _xResidue->Fill(d_position.X());
+                // _yResidue->Fill(d_position.Y());
+                // _xyResidue->Fill(d_position.X(), d_position.Y());
                 auto mc_direction = mc_directions[i];
                 auto cl_direction = cl_directions[i];
                 _cosResidue->Fill(mc_direction.Dot(cl_direction));
                 auto mc_energy = mc_energies[i];
                 auto cl_energy = cl_energies[i];
-                _eeResidue->Fill(cl_energy-mc_energy);
+                _emClusterVec.push_back(cl_energy);
+                // _eeResidue->Fill(cl_energy-mc_energy);
             }
         } else {
             streamlog_out(ERROR) << "Different numbers of particle(s) and cluster(s): ";
             streamlog_out(ERROR) << N_particles <<" != "<< N_clusters <<endl;
         }
-
-
-
-    
+        streamlog_out(DEBUG) <<endl;
     } catch (DataNotAvailableException &e) {
         streamlog_out(ERROR) << "Whoops!....\n";
         streamlog_out(ERROR) << e.what();
@@ -198,4 +211,44 @@ void ClusterAnalysisProcessor::check(LCEvent * evt) {
 }
 
 void ClusterAnalysisProcessor::end() {
+    _runEnergy->SetBinContent(1, runEnergy);
+
+    // Using the full statistical information to determine the binsize
+    float meanXResidue = TMath::Mean(_xResidueVec.begin(), _xResidueVec.end());
+    float sigmaXResidue = TMath::RMS(_xResidueVec.begin(), _xResidueVec.end());
+    float meanYResidue = TMath::Mean(_yResidueVec.begin(), _yResidueVec.end());
+    float sigmaYResidue = TMath::RMS(_yResidueVec.begin(), _yResidueVec.end());
+    float meanEmCluster = TMath::Mean(_emClusterVec.begin(), _emClusterVec.end());
+    float sigmaEmCluster = TMath::RMS(_emClusterVec.begin(), _emClusterVec.end());
+    // Now declaring the histograms
+    float minXResidue = meanXResidue - radiusOverSigma*sigmaXResidue;
+    float maxXResidue = meanXResidue + radiusOverSigma*sigmaXResidue;
+    float minYResidue = meanYResidue - radiusOverSigma*sigmaYResidue;
+    float maxYResidue = meanYResidue + radiusOverSigma*sigmaYResidue;
+    float minEmCluster = meanEmCluster - radiusOverSigma*sigmaEmCluster;
+    float maxEmCluster = meanEmCluster + radiusOverSigma*sigmaEmCluster;
+    _xResidue->SetBins(_xResidue->GetNbinsX(), minXResidue, maxXResidue);
+    _yResidue->SetBins(_yResidue->GetNbinsX(), minYResidue, maxYResidue);
+    _xyResidue->SetBins(_xResidue->GetNbinsX(), minXResidue, maxXResidue, _yResidue->GetNbinsX(), minYResidue, maxYResidue);
+    _emCluster->SetBins(_emCluster->GetNbinsX(), minEmCluster, maxEmCluster);
+    // Now filling the histograms
+    for (int i=0; i < _xResidueVec.size(); i++){
+        _xResidue->Fill(_xResidueVec[i]);
+        _yResidue->Fill(_yResidueVec[i]);
+        _xyResidue->Fill(_xResidueVec[i], _yResidueVec[i]);
+    }
+    for (double mip : _emClusterVec) {_emCluster->Fill(mip);}
+    
+    
+    _xResidue->Fit("gaus");	//Fit a gaussian to the distribution
+    TF1 *cl_fitX = (TF1*)_xResidue->GetListOfFunctions()->FindObject("gaus");
+    gStyle->SetOptFit(1111);//Set to 1 to show and save the fit with the histogram in the root file generated by the AIDAProcessor
+    _yResidue->Fit("gaus");	//Fit a gaussian to the distribution
+    TF1 *cl_fitY = (TF1*)_yResidue->GetListOfFunctions()->FindObject("gaus");
+    gStyle->SetOptFit(1111);//Set to 1 to show and save the fit with the histogram in the root file generated by the AIDAProcessor
+    _emCluster->Fit("gaus");	//Fit a gaussian to the distribution
+    TF1 *cl_fitEm = (TF1*)_emCluster->GetListOfFunctions()->FindObject("gaus");
+    gStyle->SetOptFit(1111);//Set to 1 to show and save the fit with the histogram in the root file generated by the AIDAProcessor
+
+    streamlog_out(MESSAGE) << "\n Cluster fit Res. " << cl_fitEm->GetParameter(2) / cl_fitEm->GetParameter(1) <<endl;
 }

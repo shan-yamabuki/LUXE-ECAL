@@ -46,10 +46,11 @@ using namespace std;
 class ClusterAnalysisProcessor : public Processor {
 private:
     float LINEARITY_MIP_to_GeV = 0.0141;
-    float LINEARITY_Edep_to_GeV = 96;
+    // float LINEARITY_Edep_to_GeV = 96;
     float ECAL_Z[2] = {0, 15*15};//mm
     float ECAL_X[2] = {-180, +180};//mm
     float ECAL_Y[2] = {-90, +90};//mm
+    float radiusOverSigma = 2.0;//Fitting range == mean +- radius
     
     virtual void GetMCInfo(LCCollection *col);
     virtual void GetClusterInfo(LCCollection *col);
@@ -64,13 +65,18 @@ private:
     vector<ROOT::Math::XYZVector> cl_directions;
     vector<double> cl_energies;
 
+    float runEnergy = -1;
+    TH1* _runEnergy;
     TH1 *_xCluster, *_yCluster, *_zCluster;
     TH2 *_xyCluster, *_zxCluster, *_zyCluster;
     TH1 *_xResidue, *_yResidue;
+    vector<double> _xResidueVec, _yResidueVec;
     TH2 *_xyResidue;
     TH1 *_axCluster, *_ayCluster, *_azCluster;
     TH1 *_cosResidue;
-    TH1 *_eeCluster, *_eeResidue;
+    TH1 *_emCluster;
+    vector<double> _emClusterVec;
+    // TH1 *_eeCluster, *_eeResidue;
 
 public:
     virtual Processor *newProcessor() { return new ClusterAnalysisProcessor; }
