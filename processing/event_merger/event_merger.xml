@@ -1,0 +1,63 @@
+<marlin>
+
+    <!-- The lcgeo directory where to look for the ILD model -->
+    <constants>
+        <constant name="ENERGY" value="ENERGY_00000MeV" />"
+        <constant name="RUNTAG" value="ECALe_luxe_v1_QGSP_BERT_e-_${ENERGY}" />"
+        <constant name="RUNID1" value="RUNID_00" />"
+        <constant name="RUNID2" value="$( expr ${RUNID1} + 5 )" />"
+        <constant name="INPUTPATH" value="/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/NPOD_samples/20240904_v1/pixelization/data" />"
+        <constant name="INPUTPREFIX" value="" />"
+        <constant name="OUTPUTPATH" value="/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/NPOD_samples/20240904_v1/pixelization/data" />"
+        <!-- <constant name="OUTPUTPREFIX" value="ArborCluster" />" -->
+        <constant name="OUTPUTPREFIX" value="TwoPhotonCluster" />"
+    </constants>
+    <!--########  Execute  ######################################## -->
+    <execute>
+        <!--processor name="InitDD4hep"/-->
+        <processor name="EventOverlay"/>
+        <processor name="DSTOutput"/>
+    </execute>
+
+    <!--########  Global  ######################################## -->
+    <global>
+        <parameter name="LCIOInputFiles">
+            ${INPUTPATH}/${INPUTPREFIX}${RUNTAG}_${RUNID1}.slcio
+        </parameter>
+        <parameter name="AllowToModifyEvent" value="false" />
+        <!-- <parameter name="MaxRecordNumber" value="1500"/> -->
+        <parameter name="SkipNEvents" value="0"/>
+        <parameter name="SupressCheck" value="false"/>
+        <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">
+            DEBUG
+        </parameter>
+        <!-- <parameter name="RandomSeed" value="1234567890" /> -->
+    </global>
+
+
+    <processor name="EventOverlay" type="MergeEvents">  
+        <!-- ##WIP## ONLY ONE FILE IS ALLOWED HERE ##WIP## -->
+        <parameter name="InputFileNames" type="StringVec">
+            ${INPUTPATH}/${INPUTPREFIX}${RUNTAG}_${RUNID2}.slcio
+        </parameter>
+        <parameter name="NumberMergeEvents" type="int"> 1 </parameter>
+        <parameter name="CollectionMap" type ="StringVec"> MCParticle MCParticle SiEcalCollection SiEcalCollection </parameter>
+        <!-- <parameter name="OutputFileName" type="string">
+            ${OUTPUTPATH}/${OUTPUTPREFIX}_${RUNTAG}_5.slcio
+        </parameter> -->
+        <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">
+            DEBUG
+        </parameter>
+
+    </processor>
+
+    <processor name="DSTOutput" type="LCIOOutputProcessor">
+        <!--DST output: drop all hits, skim MCParticles and keep final Tracks, Clusters and ReconstructedParticles-->
+        <parameter name="LCIOOutputFile" type="string" >
+            ${OUTPUTPATH}/${OUTPUTPREFIX}_${RUNTAG}_5.slcio
+        </parameter>
+        <parameter name="LCIOWriteMode" type="string" value="WRITE_NEW"/>
+        <!--parameter name="SplitFileSizekB" type="int" value="1992294"/-->
+    </processor>
+
+</marlin>

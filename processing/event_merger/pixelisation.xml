@@ -1,0 +1,63 @@
+<marlin>
+    
+    <!-- The lcgeo directory where to look for the ILD model -->
+    <constants>
+        <constant name="ENERGY" value="ENERGY_00000MeV" />"
+        <constant name="RUNTAG" value="ECALe_luxe_v1_QGSP_BERT_e-_${ENERGY}" />"
+        <constant name="RUNID1" value="RUNID_00" />"
+        <!-- <constant name="RUNID2" value="$( expr ${RUNID1} + 5 )" />" -->
+        <constant name="INPUTPATH" value="/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/NPOD_samples/20240904_v1/data" />"
+        <constant name="INPUTPREFIX" value="" />"
+        <constant name="OUTPUTPATH" value="/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/NPOD_samples/20240904_v1/pixelization/data" />"
+        <!-- <constant name="OUTPUTPREFIX" value="ArborCluster" />" -->
+        <constant name="OUTPUTPREFIX" value="Pixelised_" />"
+    </constants>
+
+    <!--########  Execute  ######################################## -->
+    <execute>
+        <!--processor name="InitDD4hep"/-->
+        <processor name="ECALEPixelisation"/>
+        <processor name="DSTOutput"/>
+    </execute>
+
+    <!--########  Global  ######################################## -->
+    <global>
+        <parameter name="LCIOInputFiles">
+            ${INPUTPATH}/${INPUTPREFIX}${RUNTAG}_${RUNID1}0.slcio
+            ${INPUTPATH}/${INPUTPREFIX}${RUNTAG}_${RUNID1}1.slcio
+            ${INPUTPATH}/${INPUTPREFIX}${RUNTAG}_${RUNID1}2.slcio
+            ${INPUTPATH}/${INPUTPREFIX}${RUNTAG}_${RUNID1}3.slcio
+            ${INPUTPATH}/${INPUTPREFIX}${RUNTAG}_${RUNID1}4.slcio
+            ${INPUTPATH}/${INPUTPREFIX}${RUNTAG}_${RUNID1}5.slcio
+            ${INPUTPATH}/${INPUTPREFIX}${RUNTAG}_${RUNID1}6.slcio
+            ${INPUTPATH}/${INPUTPREFIX}${RUNTAG}_${RUNID1}7.slcio
+            ${INPUTPATH}/${INPUTPREFIX}${RUNTAG}_${RUNID1}8.slcio
+            ${INPUTPATH}/${INPUTPREFIX}${RUNTAG}_${RUNID1}9.slcio
+        </parameter>
+        <parameter name="AllowToModifyEvent" value="false" />  
+        <!-- <parameter name="MaxRecordNumber" value="100"/>   -->
+        <parameter name="SkipNEvents" value="0"/>
+        <parameter name="SupressCheck" value="false"/>
+        <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">
+            DEBUG
+        </parameter>
+        <!-- <parameter name="RandomSeed" value="1234567890" /> -->
+    </global>
+
+
+    <processor name="ECALEPixelisation" type="PixelizationProcessor">
+        <parameter name="SimECALCollectionName" type="string"> SiEcalCollection </parameter>
+        <parameter name="PixelECALCollectionName" type="string"> PixelSiEcalCollection </parameter>
+    </processor>
+
+    <processor name="DSTOutput" type="LCIOOutputProcessor">
+        <!--DST output: drop all hits, skim MCParticles and keep final Tracks, Clusters and  ReconstructedParticles-->
+        <parameter name="LCIOOutputFile" type="string" >
+            ${OUTPUTPATH}/${OUTPUTPREFIX}${RUNTAG}_${RUNID1}.slcio
+        </parameter>
+        <parameter name="LCIOWriteMode" type="string" value="WRITE_NEW"/>
+        <!--parameter name="SplitFileSizekB" type="int" value="1992294"/-->
+    </processor>
+
+
+</marlin>
