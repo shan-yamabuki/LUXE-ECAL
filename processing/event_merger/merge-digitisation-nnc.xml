@@ -19,8 +19,8 @@
         <processor name="EventMerger"/>
         <processor name="Digitiser"/>
         <processor name="NNClusteriser"/>
-        <processor name="ArborRanger"/>
-        <processor name="ArborBushConnector"/>
+        <!-- <processor name="ArborRanger"/>
+        <processor name="ArborBushConnector"/> -->
        
         <processor name="TwoPhotonReconstructor_strategy1"/>
         <processor name="TwoPhotonReconstructor_strategy2"/>
@@ -78,8 +78,8 @@
     <processor name="NNClusteriser" type="NNClusteringProcessor">  
         <parameter name="EcalCollection" type="StringVec"> EcalCollection </parameter>
         <parameter name="OutputCollection" type="string"> NNClusters </parameter>
-        <parameter name="DistanceCut" type="float"> 20 </parameter><!--distance cut in mm-->
-        <parameter name="EnergyCut" type="float"> 0. </parameter><!--energy cut in GeV-->
+        <parameter name="DistanceCut" type="float"> 18.7 </parameter><!--distance cut in mm-->
+        <parameter name="EnergyCut" type="float"> 2. </parameter><!--energy cut in MIP-->
     </processor>
     
     <!-- ========== Initial clustering: from caloHit to branches ========= -->

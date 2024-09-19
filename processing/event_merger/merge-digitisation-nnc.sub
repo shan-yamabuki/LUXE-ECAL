@@ -1,0 +1,15 @@
+universe = vanilla 
+executable = /lhome/ific/h/huangsha/repos/SiWECAL/processing/event_merger/steering/run_mdcr_ENERGY_00000_$(Item)+$$([ $(Item) + 5 ]).sh
+log        = /lhome/ific/h/huangsha/repos/SiWECAL/processing/event_merger/logs/condor_mdcr_ENERGY_00000_$(Item)+$$([ $(Item) + 5 ]).log
+output     = /lhome/ific/h/huangsha/repos/SiWECAL/processing/event_merger/logs/stdout_mdcr_ENERGY_00000_$(Item)+$$([ $(Item) + 5 ]).log
+error      = /lhome/ific/h/huangsha/repos/SiWECAL/processing/event_merger/logs/stderr_mdcr_ENERGY_00000_$(Item)+$$([ $(Item) + 5 ]).log
+
+#should_transfer_files   = Yes
+#when_to_transfer_output = ON_EXIT
++JobFlavour = "comida"
+# options: comida=corto=2h, dia=largo=1d, puente=muylargo=4d, semana=eterno=1w
+# quicker the job, shorter the queue
+
+args = $(Item)
+# queue
+queue Item from seq 5 1 9 |
