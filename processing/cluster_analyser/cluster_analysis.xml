@@ -3,13 +3,14 @@
     <!-- The lcgeo directory where to look for the ILD model -->
      
     <constants>
-        <constant name="ENERGY" value="00000MeV" />"
+        <constant name="ENERGY" value="ENERGY_00000MeV" />"
         <constant name="RUNTAG" value="ECALe_luxe_v1_QGSP_BERT_e-_${ENERGY}" />"
-        <constant name="INPUTPATH" value="/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/NPOD_samples/20240827_v1/EnergyR/clustering/data" />"
-        <constant name="INPUTPREFIX" value="PixelDigiCluster" />"
+        <constant name="INPUTPATH" value="/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/NPOD_samples/20240904_v1/clustering/data" />"
+        <constant name="INPUTPREFIX" value="TwoPhotonCluster_" />"
         <constant name="OUTPUTPATH" value="output/" />"
         <!-- <constant name="OUTPUTPREFIX" value="ArborCluster" />" -->
-        <constant name="OUTPUTPREFIX" value="NNCluster" />"
+        <constant name="OUTPUTPREFIX" value="TwoPhotonCluster_" />"
+        <constant name="OUTPUTPOSTFIX" value="_POSTFIX_00" />
     </constants>
     
     <!--########  Execute  ######################################## -->
@@ -23,11 +24,11 @@
     <!--########  Global  ######################################## -->
     <global>
         <parameter name="LCIOInputFiles">
-            ${INPUTPATH}/${INPUTPREFIX}_${RUNTAG}_0.slcio
-            ${INPUTPATH}/${INPUTPREFIX}_${RUNTAG}_1.slcio
-            ${INPUTPATH}/${INPUTPREFIX}_${RUNTAG}_2.slcio
-            ${INPUTPATH}/${INPUTPREFIX}_${RUNTAG}_3.slcio
-            ${INPUTPATH}/${INPUTPREFIX}_${RUNTAG}_4.slcio
+            ${INPUTPATH}/${INPUTPREFIX}${RUNTAG}_5+10.slcio
+            ${INPUTPATH}/${INPUTPREFIX}${RUNTAG}_6+11.slcio
+            ${INPUTPATH}/${INPUTPREFIX}${RUNTAG}_7+12.slcio
+            ${INPUTPATH}/${INPUTPREFIX}${RUNTAG}_8+13.slcio
+            ${INPUTPATH}/${INPUTPREFIX}${RUNTAG}_9+14.slcio
         </parameter>
         <parameter name="AllowToModifyEvent" value="false" />
         <!-- <parameter name="MaxRecordNumber" value="10"/> -->
@@ -49,7 +50,7 @@
         <parameter name="Compress" type="int" value="1"/>
         <!-- filename without extension-->
         <parameter name="FileName" type="string">
-            ${OUTPUTPATH}/${OUTPUTPREFIX}_${RUNTAG}
+            ${OUTPUTPATH}/${OUTPUTPREFIX}${RUNTAG}${OUTPUTPOSTFIX}
         </parameter>
         <!-- type of output file xml (default) or root ( only OpenScientist)-->
         <parameter name="FileType" type="string" value="root"/>
