@@ -137,6 +137,7 @@ run_local=$PWD
 source_file="${run_local}/../../init_key4hep.sh"
 geometry_folder="${run_local}/../geometry/ECALe_luxe/"
 data_path="${run_local}/data"
+# data_path="/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ddsim/electron/run_20240904/"
 steer_path="${run_local}/steer"
 log_path="${run_local}/log"
 
